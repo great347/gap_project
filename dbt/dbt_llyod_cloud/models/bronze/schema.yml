@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: br_customers
+    config:
+      schema: bronze 
+      materialized: table
+    columns:
+      - name: customer_id
+        description: "The unique identifier for a customer"
+        tests:
+          - unique
+          - not_null
+  
+  - name: br_transactions
+    config:
+      schema: bronze 
+      materialized: table
+    columns:
+      - name: transaction_id
+        description: "The unique identifier for transactions"
+        tests:
+          - unique
+          - not_null
