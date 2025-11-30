@@ -1,0 +1,10 @@
+{ 
+    "BigQuery Schema": [ 
+        { "name": "customer_id", "type": "INTEGER" }, 
+        { "name": "full_name", "type": "STRING" }, 
+        { "name": "post_code", "type": "STRING" }, 
+        { "name": "city", "type": "STRING" }, 
+        { "name": "region", "type": "STRING" },
+        { "name": "last_update_date", "type": "STRING" }
+    ] 
+}
