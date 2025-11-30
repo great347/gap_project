@@ -1,0 +1,22 @@
+models:
+  - name: slv_customers
+    config:
+      schema: silver 
+      materialized: table
+    columns:
+      - name: customer_id
+        description: "The unique identifier for a customer"
+        tests:
+          - unique
+          - not_null
+  
+  - name: slv_transactions
+    config:
+      schema: silver 
+      materialized: table
+    columns:
+      - name: transaction_id
+        description: "The unique identifier for transactions"
+        tests:
+          - unique
+          - not_null

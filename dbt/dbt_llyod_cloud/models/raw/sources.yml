@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: dbt_dataset 
+    database: int-dev-001      
+    schema: dbt_dataset       
+
+    tables:
+      - name: transaction
+      - name: customer
