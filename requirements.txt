@@ -1,6 +1,7 @@
 # Core Apache Beam SDK
 apache-beam
 flask
+boto
 # GCP-specific libraries (GCS, BigQuery, Dataflow runner, etc.)
 # This is required for imports like 'apache_beam.io.gcp.gcsfilesystem'
 apache-beam[gcp]
