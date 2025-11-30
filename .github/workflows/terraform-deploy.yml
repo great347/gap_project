@@ -1,0 +1,46 @@
+name: Deploy GCP Infrastructure with Terraform
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/terraform/**'
+
+env:
+  # These must match the variables in your terraform.tfvars or be supplied here
+  GCP_PROJECT_ID: int-001
+  GCP_REGION: us-west1
+  TF_WORKING_DIR: infra/terraform
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Authenticate using a Service Account Key stored as a GitHub Secret
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false # We cd into the dir manually
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: Terraform Plan
+        # We use a .tfvars file, so no explicit passing is needed here
+        run: terraform plan -out=tfplan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: Terraform Apply
+        run: terraform apply tfplan
+        working-directory: ${{ env.TF_WORKING_DIR }}
