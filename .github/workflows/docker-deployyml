@@ -1,0 +1,40 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dbt/project/**'
+
+env:
+  GCP_PROJECT_ID: int-001
+  DBT_DIR: dbt/project
+
+jobs:
+  run-dbt:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Authenticate using Workload Identity Federation (WIF) 
+      - name: Authenticate to GCP (for BigQuery access)
+        uses: google-github-actions/auth@v2
+        with:
+          # Use the DBT specific Service Account email from your service_accounts module
+          service_account: dbt-sa@int-001.iam.gserviceaccount.com 
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Run DBT commands via Docker
+        # We assume you use a profile that authenticates using Application Default Credentials (ADC)
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/${{ env.DBT_DIR }}:/usr/app/dbt_project \
+            -w /usr/app/dbt_project \
+            ghcr.io/dbt-labs/dbt-bigquery:latest \
+            dbt build --profiles-dir .
