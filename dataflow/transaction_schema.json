@@ -6,4 +6,5 @@
         { "name": "transaction_update_date", "type": "STRING" }, 
         { "name": "transaction_type", "type": "STRING" },
         { "name": "transaction_payment_value", "type": "INTEGER" }
-    ] }
+    ] 
+}
