@@ -1,46 +1,50 @@
-name: Deploy GCP Infrastructure with Terraform
+name: Run dbt models
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra/terraform/**'
-
-env:
-  # These must match the variables in your terraform.tfvars or be supplied here
-  GCP_PROJECT_ID: int-001
-  GCP_REGION: us-west1
-  TF_WORKING_DIR: infra/terraform
+on: [push]
 
 jobs:
-  terraform:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write' # This permission is crucial for OIDC authentication
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Authenticate using a Service Account Key stored as a GitHub Secret
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
+      # --- ADD THIS AUTHENTICATION STEP ---
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          # Replace with your specific GCP project ID and Service Account Email
+          project_id: "int-dev-001"
+          #service_account: "llyod-wif@int-dev-001.iam.gserviceaccount.com"
+          workload_identity_provider: "projects/226403353486/locations/global/workloadIdentityPools/github/providers/llyod-github"
+        
+          #credentials_json: '${{ secrets.GCP_SA_KEY }}'
+      # -- set environmental variables before running dbt --- 
+      - name: Set DBT_GOOGLE_PROJECT Env Var
+        run: echo "DBT_GOOGLE_PROJECT=int-dev-001" >> $GITHUB_ENV
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
+      # --- Optional: Install Python and dbt if you don't have a dedicated dbt action ---  
+      - name: Set Up Python
+        uses: actions/setup-python@v2
         with:
-          terraform_wrapper: false # We cd into the dir manually
+          python-version: '3.9.17'
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Install requirements
+        run: pip install -r requirements.txt  
 
-      - name: Terraform Plan
-        # We use a .tfvars file, so no explicit passing is needed here
-        run: terraform plan -out=tfplan
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Check connection
+        run: dbt debug
 
-      - name: Terraform Apply
-        run: terraform apply tfplan
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Install dbt dependencies
+        run: dbt deps
+
+      # --- Run dbt commands ---
+      - name: Run dbt build
+        # The auth action automatically sets GOOGLE_APPLICATION_CREDENTIALS and configures the environment
+        run: dbt test
+        # Add any necessary dbt CLI arguments here (e.g., --target prod)
