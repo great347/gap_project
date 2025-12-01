@@ -39,7 +39,7 @@ jobs:
               dev:
                 type: bigquery
                 method: oauth # Uses GOOGLE_APPLICATION_CREDENTIALS set by google-github-actions/auth
-                project: "${{ secret.DBT_GOOGLE_PROJECT }}"
+                project: "int-dev-001"
                 dataset: dbt_datasetv # <--- REPLACE WITH YOUR ACTUAL DBT DEVELOPMENT DATASET NAME
                 threads: 1
                 job_retries: 5
