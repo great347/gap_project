@@ -17,12 +17,12 @@ jobs:
         id: auth
         uses: 'google-github-actions/auth@v2'
         with:
-          project_id: "int-dev-001"
+          project_id: ${{sercet.DBT_GOOGLE_PROJECT}  # added your google project account
           # Ensure this matches your WIF provider setup EXACTLY
-          workload_identity_provider: "projects/226403353486/locations/global/workloadIdentityPools/github/providers/llyod-github"
+          workload_identity_provider: "projects/{project_number}/locations/global/workloadIdentityPools/github/providers/{provider}"
         
       - name: Set DBT_GOOGLE_PROJECT Env Var
-        run: echo "DBT_GOOGLE_PROJECT=int-dev-001" >> $GITHUB_ENV
+        run: echo "DBT_GOOGLE_PROJECT={{sercet.DBT_GOOGLE_PROJECT}" >> $GITHUB_ENV
 
       # --- Create profiles.yml for dbt connection ---
       - name: Create dbt profiles.yml
@@ -39,8 +39,8 @@ jobs:
               dev:
                 type: bigquery
                 method: oauth # Uses GOOGLE_APPLICATION_CREDENTIALS set by google-github-actions/auth
-                project: "int-dev-001"
-                dataset: dbt_dataset # <--- REPLACE WITH YOUR ACTUAL DBT DEVELOPMENT DATASET NAME
+                project: {{sercet.DBT_GOOGLE_PROJECT}"
+                dataset: {{sercet.DBT_GOOGLE_DATASET}" # <--- REPLACE WITH YOUR ACTUAL DBT DEVELOPMENT DATASET NAME
                 threads: 1
                 job_retries: 5
                 location: us
