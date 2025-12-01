@@ -4,6 +4,22 @@ expose customer transaction data to support business reporting
 
 
 ### Architecture Overview
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 A scalable medallion architecture is employed for the design of the data infrastructure.
 
 * Ingestion: data lands in raw layer (CSV files).
