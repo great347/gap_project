@@ -13,38 +13,60 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # --- ADD THIS AUTHENTICATION STEP ---
       - name: Google Auth
         id: auth
         uses: 'google-github-actions/auth@v2'
         with:
-          # Replace with your specific GCP project ID and Service Account Email
           project_id: "int-dev-001"
-          #service_account: "llyod-wif@int-dev-001.iam.gserviceaccount.com"
+          # Ensure this matches your WIF provider setup EXACTLY
           workload_identity_provider: "projects/226403353486/locations/global/workloadIdentityPools/github/providers/llyod-github"
         
-          #credentials_json: '${{ secrets.GCP_SA_KEY }}'
-      # -- set environmental variables before running dbt --- 
       - name: Set DBT_GOOGLE_PROJECT Env Var
         run: echo "DBT_GOOGLE_PROJECT=int-dev-001" >> $GITHUB_ENV
 
-      # --- Optional: Install Python and dbt if you don't have a dedicated dbt action ---  
+      # --- Create profiles.yml for dbt connection ---
+      - name: Create dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt/
+          cat <<EOF > ~/.dbt/dbt_llyod_cloud/profiles.yml
+          config:
+            send_anonymous_usage_stats: False
+
+          # IMPORTANT: 'my_dbt_project' must match the 'profile:' name in your dbt_project.yml
+          dbt_llyod_cloud:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: oauth # Uses GOOGLE_APPLICATION_CREDENTIALS set by google-github-actions/auth
+                project: "${{ secret.DBT_GOOGLE_PROJECT }}"
+                dataset: dbt_datasetv # <--- REPLACE WITH YOUR ACTUAL DBT DEVELOPMENT DATASET NAME
+                threads: 1
+                job_retries: 5
+                location: us
+                priority: interactive
+          EOF
+
       - name: Set Up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.9.17'
 
       - name: Install requirements
-        run: pip install -r requirements.txt  
+        run: pip install -r requirements.txt
+        # If your requirements.txt is in a dbt subfolder, you might need:
+        # working-directory: ./dbt 
 
+      # --- dbt commands should be run from the dbt project root ---
       - name: Check connection
         run: dbt debug
+        working-directory: ./dbt # <--- Adjust this path if your dbt_project.yml is elsewhere
 
       - name: Install dbt dependencies
         run: dbt deps
+        working-directory: ./dbt # <--- Adjust this path
 
-      # --- Run dbt commands ---
       - name: Run dbt build
-        # The auth action automatically sets GOOGLE_APPLICATION_CREDENTIALS and configures the environment
-        run: dbt test
-        # Add any necessary dbt CLI arguments here (e.g., --target prod)
+        run: dbt build # Use dbt build for models and tests
+        working-directory: ./dbt # <--- Adjust this path
+
