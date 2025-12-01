@@ -7,8 +7,11 @@ expose customer transaction data to support business reporting
 A scalable medallion architecture is employed for the design of the data infrastructure.
 
 Ingestion: data lands in raw layer (CSV files).
+
 Processing: The data is moved to the raw layer in the Bigquery using Python Apache Beam pipeline (Dataflow).
-Transformation: dbt models are used to build curated Gold layer tables with optimized partitioning and clustering.
+
+Transformation: dbt models are used to clean, transformed the data in the silver layer and to build curated Gold layer tables with optimized partitioning and clustering.
+
 Orchestration: Cloud Composer manages the workflow execution.
 
 
