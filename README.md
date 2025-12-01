@@ -42,8 +42,8 @@ Navigate to the gcp_project/terraform directory.
 
 #### Running the Data Pipeline
 
-Upload the data to the GCS bucket.
-Launch the Dataflow pipeline using the Python script 
+* Upload the data to the GCS bucket.
+* Launch the Dataflow pipeline using the Python script 
 
 #### Running dbt Transformations
 * Navigate to the dbt/project directory.
