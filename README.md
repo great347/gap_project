@@ -10,7 +10,7 @@ Ingestion: data lands in raw layer (CSV files).
 
 Processing: The data is moved to the raw layer in the Bigquery using Python Apache Beam pipeline (Dataflow).
 
-Transformation: dbt is used to load the data into the bronze layer, clean, transformed the data in the silver layer and to build curated Gold layer tables with optimized partitioning and clustering.
+Transformation: dbt is used to load the data into the bronze layer; clean, transformed the data in the silver layer and to build curated Gold layer tables and view with optimized partitioning and clustering.
 
 Orchestration: Cloud Composer manages the workflow execution.
 
