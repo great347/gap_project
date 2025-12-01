@@ -52,5 +52,6 @@ Run the models: dbt build
 
 #### Assumptions
 Source CSV files are comma-delimited and use a header row.
+the customer and transaction file aee coming from two seperato sources and in are lood seperate folder in the gcs bucket
 The system uses Workload Identity Federation or Application Default Credentials (ADC) for secure authentication.
 BigQuery schema names used in UDFs and dbt models are consistent (e.g., snake_case).
