@@ -38,7 +38,8 @@ jobs:
             outputs:
               dev:
                 type: bigquery
-                method: service-account # Uses GOOGLE_APPLICATION_CREDENTIALS set by google-github-actions/auth
+                method: service-account 
+                keyfile: {{secret.GOOGLE_APPLICATION_CREDENTIALS}} # Uses GOOGLE_APPLICATION_CREDENTIALS set by google-github-actions/auth
                 project: "int-dev-001"
                 dataset: dbt_dataset # <--- REPLACE WITH YOUR ACTUAL DBT DEVELOPMENT DATASET NAME
                 threads: 1
