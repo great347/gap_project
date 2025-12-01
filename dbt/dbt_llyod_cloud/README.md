@@ -1,5 +1,6 @@
 ### Data Platform Migration Prototype (GCP)
-The proof of concept project a modern data pipeline on Google Cloud Platform for ingesting, processing, and analyzing customer transaction data.
+The project prototyped a modern data pipeline that is leveraging google cloud platform to ingest, process, and
+expose customer transaction data to support business reporting
 
 
 ### Architecture Overview
